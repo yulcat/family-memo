@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🏠 가족 메모장</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🏠 장위동 가족 메모장</h1>
+      <p class="subtitle">서로에게 남기는 작은 메모들</p>
+    </header>
+
+    <section class="memo-form">
+      <div class="author-select">
+        <label>작성자:</label>
+        <div class="author-buttons">
+          <button class="author-btn" data-author="사장님">👨 사장님</button>
+          <button class="author-btn" data-author="사모님">👩 사모님</button>
+          <button class="author-btn" data-author="햄집사">🐹 햄집사</button>
+        </div>
+      </div>
+      <textarea id="memoContent" placeholder="가족에게 남길 메모를 작성하세요..."></textarea>
+      <button id="submitMemo" class="submit-btn">📝 메모 남기기</button>
+    </section>
+
+    <section class="memo-list">
+      <h2>📋 메모 목록</h2>
+      <div id="memos"></div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

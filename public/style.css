@@ -1,0 +1,228 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+header {
+  text-align: center;
+  color: white;
+  margin-bottom: 30px;
+}
+
+header h1 {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+.subtitle {
+  opacity: 0.9;
+  font-size: 1rem;
+}
+
+.memo-form {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+.author-select {
+  margin-bottom: 16px;
+}
+
+.author-select label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+}
+
+.author-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.author-btn {
+  padding: 10px 20px;
+  border: 2px solid #e0e0e0;
+  border-radius: 25px;
+  background: white;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.author-btn:hover {
+  border-color: #667eea;
+  background: #f8f9ff;
+}
+
+.author-btn.selected {
+  border-color: #667eea;
+  background: #667eea;
+  color: white;
+}
+
+textarea {
+  width: 100%;
+  height: 120px;
+  padding: 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 1rem;
+  resize: vertical;
+  margin-bottom: 16px;
+  font-family: inherit;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.memo-list h2 {
+  color: white;
+  margin-bottom: 16px;
+  font-size: 1.3rem;
+}
+
+.memo-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.memo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.memo-author {
+  font-weight: 600;
+  color: #667eea;
+  font-size: 1.1rem;
+}
+
+.memo-time {
+  color: #999;
+  font-size: 0.85rem;
+}
+
+.memo-content {
+  color: #333;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.memo-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.memo-actions button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: opacity 0.2s;
+}
+
+.edit-btn {
+  background: #f0f0f0;
+  color: #666;
+}
+
+.delete-btn {
+  background: #ffe0e0;
+  color: #d32f2f;
+}
+
+.memo-actions button:hover {
+  opacity: 0.8;
+}
+
+.empty-state {
+  text-align: center;
+  color: rgba(255,255,255,0.8);
+  padding: 40px 20px;
+}
+
+.empty-state .emoji {
+  font-size: 3rem;
+  margin-bottom: 16px;
+}
+
+/* 반응형 */
+@media (max-width: 480px) {
+  header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .author-buttons {
+    flex-direction: column;
+  }
+  
+  .author-btn {
+    text-align: center;
+  }
+}

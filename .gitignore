@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Database (메모 내용 포함)
+*.db
+*.sqlite
+*.sqlite3
+data/
+
+# Environment & Secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
