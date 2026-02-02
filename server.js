@@ -44,7 +44,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/api/memos', (req, res) => {
   try {
     const memos = loadMemos();
-    res.json(memos.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)));
+    // 핀된 메모 먼저, 그 다음 최신순
+    res.json(memos.sort((a, b) => {
+      // 핀 우선
+      if (a.pinned && !b.pinned) return -1;
+      if (!a.pinned && b.pinned) return 1;
+      // 같은 핀 상태면 최신순
+      return new Date(b.created_at) - new Date(a.created_at);
+    }));
   } catch (error) {
     console.error('메모 조회 오류:', error);
     res.status(500).json({ error: '메모를 불러오는데 실패했습니다.' });
@@ -54,16 +61,31 @@ app.get('/api/memos', (req, res) => {
 // API: 메모 추가
 app.post('/api/memos', (req, res) => {
   try {
-    const { author, content } = req.body;
-    if (!author || !content) {
-      return res.status(400).json({ error: '작성자와 내용을 입력해주세요.' });
+    const { author, content, type = 'memo', items = [] } = req.body;
+    
+    // 일반 메모: content 필수, 체크리스트: items 필수
+    if (!author) {
+      return res.status(400).json({ error: '작성자를 선택해주세요.' });
+    }
+    if (type === 'memo' && !content) {
+      return res.status(400).json({ error: '메모 내용을 입력해주세요.' });
+    }
+    if (type === 'checklist' && (!items || items.length === 0)) {
+      return res.status(400).json({ error: '체크리스트 항목을 입력해주세요.' });
     }
     
     const memos = loadMemos();
     const newMemo = {
       id: Date.now(),
       author,
-      content,
+      type,
+      content: content || '',
+      items: type === 'checklist' ? items.map((item, idx) => ({
+        id: idx,
+        text: typeof item === 'string' ? item : item.text,
+        checked: typeof item === 'string' ? false : (item.checked || false)
+      })) : [],
+      pinned: false,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };
@@ -85,11 +107,7 @@ app.post('/api/memos', (req, res) => {
 app.put('/api/memos/:id', (req, res) => {
   try {
     const { id } = req.params;
-    const { content } = req.body;
-    
-    if (!content) {
-      return res.status(400).json({ error: '내용을 입력해주세요.' });
-    }
+    const { content, items } = req.body;
     
     const memos = loadMemos();
     const memoIndex = memos.findIndex(m => m.id === parseInt(id));
@@ -98,17 +116,95 @@ app.put('/api/memos/:id', (req, res) => {
       return res.status(404).json({ error: '메모를 찾을 수 없습니다.' });
     }
     
-    memos[memoIndex].content = content;
-    memos[memoIndex].updated_at = new Date().toISOString();
+    const memo = memos[memoIndex];
+    
+    // 일반 메모 수정
+    if (memo.type !== 'checklist' && content !== undefined) {
+      memo.content = content;
+    }
+    
+    // 체크리스트 수정
+    if (memo.type === 'checklist' && items !== undefined) {
+      memo.items = items.map((item, idx) => ({
+        id: idx,
+        text: typeof item === 'string' ? item : item.text,
+        checked: typeof item === 'string' ? false : (item.checked || false)
+      }));
+    }
+    
+    memo.updated_at = new Date().toISOString();
     
     if (saveMemos(memos)) {
-      res.json(memos[memoIndex]);
+      res.json(memo);
     } else {
       res.status(500).json({ error: '메모 저장에 실패했습니다.' });
     }
   } catch (error) {
     console.error('메모 수정 오류:', error);
     res.status(500).json({ error: '메모 수정에 실패했습니다.' });
+  }
+});
+
+// API: 체크리스트 아이템 토글
+app.patch('/api/memos/:id/toggle/:itemId', (req, res) => {
+  try {
+    const { id, itemId } = req.params;
+    
+    const memos = loadMemos();
+    const memoIndex = memos.findIndex(m => m.id === parseInt(id));
+    
+    if (memoIndex === -1) {
+      return res.status(404).json({ error: '메모를 찾을 수 없습니다.' });
+    }
+    
+    const memo = memos[memoIndex];
+    
+    if (memo.type !== 'checklist') {
+      return res.status(400).json({ error: '체크리스트만 토글할 수 있습니다.' });
+    }
+    
+    const item = memo.items.find(i => i.id === parseInt(itemId));
+    if (!item) {
+      return res.status(404).json({ error: '항목을 찾을 수 없습니다.' });
+    }
+    
+    item.checked = !item.checked;
+    memo.updated_at = new Date().toISOString();
+    
+    if (saveMemos(memos)) {
+      res.json(memo);
+    } else {
+      res.status(500).json({ error: '저장에 실패했습니다.' });
+    }
+  } catch (error) {
+    console.error('토글 오류:', error);
+    res.status(500).json({ error: '토글에 실패했습니다.' });
+  }
+});
+
+// API: 메모 핀/고정 토글
+app.patch('/api/memos/:id/pin', (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const memos = loadMemos();
+    const memoIndex = memos.findIndex(m => m.id === parseInt(id));
+    
+    if (memoIndex === -1) {
+      return res.status(404).json({ error: '메모를 찾을 수 없습니다.' });
+    }
+    
+    memos[memoIndex].pinned = !memos[memoIndex].pinned;
+    memos[memoIndex].updated_at = new Date().toISOString();
+    
+    if (saveMemos(memos)) {
+      res.json(memos[memoIndex]);
+    } else {
+      res.status(500).json({ error: '저장에 실패했습니다.' });
+    }
+  } catch (error) {
+    console.error('핀 토글 오류:', error);
+    res.status(500).json({ error: '핀 토글에 실패했습니다.' });
   }
 });
 

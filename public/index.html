@@ -22,7 +22,32 @@
           <button class="author-btn" data-author="햄집사">🐹 햄집사</button>
         </div>
       </div>
-      <textarea id="memoContent" placeholder="가족에게 남길 메모를 작성하세요..."></textarea>
+      
+      <div class="type-select">
+        <label>유형:</label>
+        <div class="type-buttons">
+          <button class="type-btn selected" data-type="memo">📝 메모</button>
+          <button class="type-btn" data-type="checklist">☑️ 체크리스트</button>
+        </div>
+      </div>
+
+      <!-- 일반 메모 입력 -->
+      <div id="memoInput" class="input-section">
+        <textarea id="memoContent" placeholder="가족에게 남길 메모를 작성하세요..."></textarea>
+      </div>
+
+      <!-- 체크리스트 입력 -->
+      <div id="checklistInput" class="input-section hidden">
+        <input type="text" id="checklistTitle" placeholder="체크리스트 제목 (예: 장보기 목록)" class="checklist-title-input">
+        <div id="checklistItems" class="checklist-items-input">
+          <div class="checklist-item-input">
+            <input type="text" placeholder="항목 입력 후 Enter" class="item-input" autofocus>
+            <button class="remove-item-btn" title="삭제">×</button>
+          </div>
+        </div>
+        <button id="addItemBtn" class="add-item-btn">+ 항목 추가</button>
+      </div>
+
       <button id="submitMemo" class="submit-btn">📝 메모 남기기</button>
     </section>
 

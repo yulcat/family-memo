@@ -41,24 +41,28 @@ header h1 {
   box-shadow: 0 10px 40px rgba(0,0,0,0.2);
 }
 
-.author-select {
+.author-select,
+.type-select {
   margin-bottom: 16px;
 }
 
-.author-select label {
+.author-select label,
+.type-select label {
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
   color: #333;
 }
 
-.author-buttons {
+.author-buttons,
+.type-buttons {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
 }
 
-.author-btn {
+.author-btn,
+.type-btn {
   padding: 10px 20px;
   border: 2px solid #e0e0e0;
   border-radius: 25px;
@@ -68,15 +72,25 @@ header h1 {
   transition: all 0.2s;
 }
 
-.author-btn:hover {
+.author-btn:hover,
+.type-btn:hover {
   border-color: #667eea;
   background: #f8f9ff;
 }
 
-.author-btn.selected {
+.author-btn.selected,
+.type-btn.selected {
   border-color: #667eea;
   background: #667eea;
   color: white;
+}
+
+.input-section {
+  margin-bottom: 16px;
+}
+
+.input-section.hidden {
+  display: none;
 }
 
 textarea {
@@ -87,13 +101,87 @@ textarea {
   border-radius: 12px;
   font-size: 1rem;
   resize: vertical;
-  margin-bottom: 16px;
   font-family: inherit;
 }
 
 textarea:focus {
   outline: none;
   border-color: #667eea;
+}
+
+/* 체크리스트 입력 스타일 */
+.checklist-title-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.checklist-title-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.checklist-items-input {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.checklist-item-input {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.checklist-item-input .item-input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.checklist-item-input .item-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.remove-item-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: #ffe0e0;
+  color: #d32f2f;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.remove-item-btn:hover {
+  background: #ffcdd2;
+}
+
+.add-item-btn {
+  padding: 8px 16px;
+  border: 2px dashed #ccc;
+  background: transparent;
+  border-radius: 8px;
+  color: #666;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.add-item-btn:hover {
+  border-color: #667eea;
+  color: #667eea;
+  background: #f8f9ff;
 }
 
 .submit-btn {
@@ -133,6 +221,20 @@ textarea:focus {
   margin-bottom: 16px;
   box-shadow: 0 4px 15px rgba(0,0,0,0.1);
   animation: slideIn 0.3s ease;
+  position: relative;
+}
+
+.memo-card.pinned {
+  border: 2px solid #ffd700;
+  background: linear-gradient(135deg, #fffef0 0%, #fff 100%);
+}
+
+.memo-card.pinned::before {
+  content: '📌';
+  position: absolute;
+  top: -8px;
+  right: 12px;
+  font-size: 1.2rem;
 }
 
 @keyframes slideIn {
@@ -159,6 +261,16 @@ textarea:focus {
   font-size: 1.1rem;
 }
 
+.memo-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.memo-type-badge {
+  font-size: 0.9rem;
+}
+
 .memo-time {
   color: #999;
   font-size: 0.85rem;
@@ -169,6 +281,79 @@ textarea:focus {
   line-height: 1.6;
   white-space: pre-wrap;
   word-break: break-word;
+}
+
+/* 체크리스트 카드 스타일 */
+.checklist-card .checklist-title {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12px;
+  font-size: 1.05rem;
+}
+
+.progress-bar {
+  height: 24px;
+  background: #f0f0f0;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%);
+  border-radius: 12px;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #666;
+}
+
+.checklist-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: #f8f9ff;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.checklist-item:hover {
+  background: #eef0ff;
+}
+
+.checklist-item.checked {
+  background: #e8f5e9;
+}
+
+.checklist-item.checked .item-text {
+  text-decoration: line-through;
+  color: #999;
+}
+
+.checklist-item .checkbox {
+  font-size: 1.1rem;
+}
+
+.checklist-item .item-text {
+  flex: 1;
+  color: #333;
 }
 
 .memo-actions {
@@ -185,6 +370,11 @@ textarea:focus {
   cursor: pointer;
   font-size: 0.9rem;
   transition: opacity 0.2s;
+}
+
+.pin-btn {
+  background: #fff9e0;
+  color: #ff9800;
 }
 
 .edit-btn {
@@ -218,11 +408,13 @@ textarea:focus {
     font-size: 1.5rem;
   }
   
-  .author-buttons {
+  .author-buttons,
+  .type-buttons {
     flex-direction: column;
   }
   
-  .author-btn {
+  .author-btn,
+  .type-btn {
     text-align: center;
   }
 }
