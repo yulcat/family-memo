@@ -42,12 +42,14 @@ header h1 {
 }
 
 .author-select,
-.type-select {
+.type-select,
+.color-select {
   margin-bottom: 16px;
 }
 
 .author-select label,
-.type-select label {
+.type-select label,
+.color-select label {
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
@@ -55,7 +57,8 @@ header h1 {
 }
 
 .author-buttons,
-.type-buttons {
+.type-buttons,
+.color-buttons {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
@@ -83,6 +86,33 @@ header h1 {
   border-color: #667eea;
   background: #667eea;
   color: white;
+}
+
+/* 색상 라벨 버튼 */
+.color-btn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 2px solid #e0e0e0;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.color-btn:hover {
+  transform: scale(1.1);
+  border-color: #667eea;
+}
+
+.color-btn.selected {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+  transform: scale(1.1);
 }
 
 .input-section {
@@ -222,6 +252,33 @@ textarea:focus {
   box-shadow: 0 4px 15px rgba(0,0,0,0.1);
   animation: slideIn 0.3s ease;
   position: relative;
+  border-left: 5px solid transparent;
+}
+
+/* 색상 라벨 스타일 */
+.memo-card.color-red {
+  border-left-color: #f44336;
+  background: linear-gradient(90deg, #fff5f5 0%, #fff 20%);
+}
+
+.memo-card.color-yellow {
+  border-left-color: #ffc107;
+  background: linear-gradient(90deg, #fffef0 0%, #fff 20%);
+}
+
+.memo-card.color-green {
+  border-left-color: #4caf50;
+  background: linear-gradient(90deg, #f0fff4 0%, #fff 20%);
+}
+
+.memo-card.color-blue {
+  border-left-color: #2196f3;
+  background: linear-gradient(90deg, #f0f8ff 0%, #fff 20%);
+}
+
+.memo-card.color-purple {
+  border-left-color: #9c27b0;
+  background: linear-gradient(90deg, #faf0ff 0%, #fff 20%);
 }
 
 .memo-card.pinned {
@@ -370,6 +427,11 @@ textarea:focus {
   cursor: pointer;
   font-size: 0.9rem;
   transition: opacity 0.2s;
+}
+
+.color-change-btn {
+  background: #f0f8ff;
+  color: #2196f3;
 }
 
 .pin-btn {

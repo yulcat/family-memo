@@ -61,7 +61,7 @@ app.get('/api/memos', (req, res) => {
 // API: 메모 추가
 app.post('/api/memos', (req, res) => {
   try {
-    const { author, content, type = 'memo', items = [] } = req.body;
+    const { author, content, type = 'memo', items = [], color = '' } = req.body;
     
     // 일반 메모: content 필수, 체크리스트: items 필수
     if (!author) {
@@ -85,6 +85,7 @@ app.post('/api/memos', (req, res) => {
         text: typeof item === 'string' ? item : item.text,
         checked: typeof item === 'string' ? false : (item.checked || false)
       })) : [],
+      color: color || '',
       pinned: false,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
@@ -107,7 +108,7 @@ app.post('/api/memos', (req, res) => {
 app.put('/api/memos/:id', (req, res) => {
   try {
     const { id } = req.params;
-    const { content, items } = req.body;
+    const { content, items, color } = req.body;
     
     const memos = loadMemos();
     const memoIndex = memos.findIndex(m => m.id === parseInt(id));
@@ -130,6 +131,11 @@ app.put('/api/memos/:id', (req, res) => {
         text: typeof item === 'string' ? item : item.text,
         checked: typeof item === 'string' ? false : (item.checked || false)
       }));
+    }
+    
+    // 색상 수정
+    if (color !== undefined) {
+      memo.color = color;
     }
     
     memo.updated_at = new Date().toISOString();
@@ -179,6 +185,33 @@ app.patch('/api/memos/:id/toggle/:itemId', (req, res) => {
   } catch (error) {
     console.error('토글 오류:', error);
     res.status(500).json({ error: '토글에 실패했습니다.' });
+  }
+});
+
+// API: 메모 색상 변경
+app.patch('/api/memos/:id/color', (req, res) => {
+  try {
+    const { id } = req.params;
+    const { color } = req.body;
+    
+    const memos = loadMemos();
+    const memoIndex = memos.findIndex(m => m.id === parseInt(id));
+    
+    if (memoIndex === -1) {
+      return res.status(404).json({ error: '메모를 찾을 수 없습니다.' });
+    }
+    
+    memos[memoIndex].color = color || '';
+    memos[memoIndex].updated_at = new Date().toISOString();
+    
+    if (saveMemos(memos)) {
+      res.json(memos[memoIndex]);
+    } else {
+      res.status(500).json({ error: '저장에 실패했습니다.' });
+    }
+  } catch (error) {
+    console.error('색상 변경 오류:', error);
+    res.status(500).json({ error: '색상 변경에 실패했습니다.' });
   }
 });
 

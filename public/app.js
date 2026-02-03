@@ -1,10 +1,12 @@
 // 상태 관리
 let selectedAuthor = null;
 let selectedType = 'memo';
+let selectedColor = '';
 
 // DOM 요소
 const authorButtons = document.querySelectorAll('.author-btn');
 const typeButtons = document.querySelectorAll('.type-btn');
+const colorButtons = document.querySelectorAll('.color-btn');
 const memoInput = document.getElementById('memoInput');
 const checklistInput = document.getElementById('checklistInput');
 const memoContent = document.getElementById('memoContent');
@@ -40,6 +42,15 @@ typeButtons.forEach(btn => {
       checklistInput.classList.remove('hidden');
       submitBtn.textContent = '☑️ 체크리스트 만들기';
     }
+  });
+});
+
+// 색상 선택
+colorButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    colorButtons.forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedColor = btn.dataset.color;
   });
 });
 
@@ -112,6 +123,7 @@ function renderMemos(memos) {
     const pinClass = memo.pinned ? 'pinned' : '';
     const pinIcon = memo.pinned ? '📌' : '📍';
     const pinTitle = memo.pinned ? '고정 해제' : '상단에 고정';
+    const colorClass = memo.color ? `color-${memo.color}` : '';
     
     if (memo.type === 'checklist') {
       const checkedCount = memo.items?.filter(i => i.checked).length || 0;
@@ -119,7 +131,7 @@ function renderMemos(memos) {
       const progress = totalCount > 0 ? Math.round((checkedCount / totalCount) * 100) : 0;
       
       return `
-        <div class="memo-card checklist-card ${pinClass}" data-id="${memo.id}">
+        <div class="memo-card checklist-card ${pinClass} ${colorClass}" data-id="${memo.id}">
           <div class="memo-header">
             <span class="memo-author">${escapeHtml(memo.author)}</span>
             <div class="memo-meta">
@@ -141,6 +153,7 @@ function renderMemos(memos) {
             `).join('')}
           </div>
           <div class="memo-actions">
+            <button class="color-change-btn" onclick="changeColor(${memo.id})" title="색상 변경">🎨</button>
             <button class="pin-btn" onclick="togglePin(${memo.id})" title="${pinTitle}">${pinIcon}</button>
             <button class="delete-btn" onclick="deleteMemo(${memo.id})">🗑️</button>
           </div>
@@ -148,13 +161,14 @@ function renderMemos(memos) {
       `;
     } else {
       return `
-        <div class="memo-card ${pinClass}" data-id="${memo.id}">
+        <div class="memo-card ${pinClass} ${colorClass}" data-id="${memo.id}">
           <div class="memo-header">
             <span class="memo-author">${escapeHtml(memo.author)}</span>
             <span class="memo-time">${formatDate(memo.created_at)}</span>
           </div>
           <div class="memo-content">${escapeHtml(memo.content)}</div>
           <div class="memo-actions">
+            <button class="color-change-btn" onclick="changeColor(${memo.id})" title="색상 변경">🎨</button>
             <button class="pin-btn" onclick="togglePin(${memo.id})" title="${pinTitle}">${pinIcon}</button>
             <button class="edit-btn" onclick="editMemo(${memo.id})">✏️</button>
             <button class="delete-btn" onclick="deleteMemo(${memo.id})">🗑️</button>
@@ -187,7 +201,7 @@ async function addMemo() {
         submitBtn.textContent = originalText;
         return;
       }
-      body = { author: selectedAuthor, type: 'memo', content };
+      body = { author: selectedAuthor, type: 'memo', content, color: selectedColor };
     } else {
       const title = checklistTitle.value.trim();
       const items = Array.from(checklistItems.querySelectorAll('.item-input'))
@@ -200,7 +214,7 @@ async function addMemo() {
         submitBtn.textContent = originalText;
         return;
       }
-      body = { author: selectedAuthor, type: 'checklist', content: title, items };
+      body = { author: selectedAuthor, type: 'checklist', content: title, items, color: selectedColor };
     }
 
     const response = await fetch('/api/memos', {
@@ -262,6 +276,48 @@ async function toggleItem(memoId, itemId) {
     }
   } catch (error) {
     console.error('토글 실패:', error);
+  }
+}
+
+// 색상 변경
+async function changeColor(id) {
+  const colors = [
+    { value: '', label: '⚪ 없음' },
+    { value: 'red', label: '🔴 긴급/중요' },
+    { value: 'yellow', label: '🟡 주의' },
+    { value: 'green', label: '🟢 완료/긍정' },
+    { value: 'blue', label: '🔵 정보' },
+    { value: 'purple', label: '🟣 아이디어' }
+  ];
+  
+  const colorChoice = prompt(
+    '색상을 선택하세요:\n' +
+    colors.map((c, i) => `${i}. ${c.label}`).join('\n') +
+    '\n\n번호를 입력하세요 (0-5):'
+  );
+  
+  if (colorChoice === null) return;
+  
+  const index = parseInt(colorChoice);
+  if (isNaN(index) || index < 0 || index > 5) {
+    alert('올바른 번호를 입력해주세요 (0-5)');
+    return;
+  }
+  
+  try {
+    const response = await fetch(`/api/memos/${id}/color`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ color: colors[index].value })
+    });
+
+    if (response.ok) {
+      loadMemos();
+    } else {
+      console.error('색상 변경 실패');
+    }
+  } catch (error) {
+    console.error('색상 변경 실패:', error);
   }
 }
 
